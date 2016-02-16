@@ -69,7 +69,6 @@ define(['react', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
     });
 
     var Output = React.createClass({
-
         render: function() {
             return <span style={{fontWeight: this.props.bold ? "bold" : "normal",
             fontStyle: this.props.italic ? "italic" : "normal"}}>{this.props.title}</span>
