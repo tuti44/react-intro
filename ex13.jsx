@@ -45,6 +45,16 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
                 boxes: boxes
             }
         },
+        changeOrder: function(draggedKey, draggedOnKey) {
+            var index1 = _.findIndex(this.state.boxes, {key: draggedKey});
+            var index2 = _.findIndex(this.state.boxes, {key: draggedOnKey});
+            var newBoxes = this.state.boxes.slice();
+            newBoxes[index2] = this.state.boxes[index1];
+            newBoxes[index1] = this.state.boxes[index2];
+            this.setState({
+                boxes: newBoxes
+            });
+        },
         handleStart: function (event, ui) {
             if (event.target.classList.contains("small-box")) {
                 return false;
@@ -54,7 +64,7 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
             var children = [];
             var boxes = this.state.boxes;
             for (var i = 0, length = boxes.length; i < length; i++) {
-                children.push(<SmallBox color={boxes[i].color} key={boxes[i].key}/>)
+                children.push(<SmallBox changeOrder={this.changeOrder} color={boxes[i].color} key={boxes[i].key} dataId={boxes[i].key}/>)
             }
             return children;
         },
@@ -77,9 +87,16 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
     });
 
     var SmallBox = React.createClass({
+        getInitialState: function () {
+          return {
+              style: {
+                  backgroundColor: this.props.color,
+                  transform: 'translate(0px,0px)',
+              }
+          }
+        },
         handleStart: function (event, ui) {
-            console.log(event.clientX);
-            console.log(event.clientY);
+
         },
 
         handleDrag: function (event, ui) {
@@ -87,7 +104,19 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
         },
 
         handleStop: function (event, ui) {
-            event.target.classList.remove("dragging");
+            var x = event.clientX;
+            var y = event.clientY;
+            var elements = document.elementsFromPoint(x, y);
+            var draggedOn = _.filter(elements, function (element) {
+                var classList = element.classList;
+                return classList.contains("small-box") && !classList.contains("react-draggable-dragging")
+            })[0];
+            if (draggedOn) {
+                this.props.changeOrder(this.props.dataId, draggedOn.dataset.id);
+            }
+            //this.setState({
+            //
+            //})
         },
         render: function () {
             return (
@@ -97,7 +126,7 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
                     onStart={this.handleStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleStop}>
-                    <div className="small-box handle" style={{backgroundColor: this.props.color}}></div>
+                    <div className="small-box handle" style={this.state.style} data-id={this.props.dataId}></div>
                 </Draggable>
             )
         }
