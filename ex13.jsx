@@ -9,7 +9,7 @@ require.config({
         //Draggable: './bower_components/react-drag/dist/react-drag'
         Draggable: './node_modules/react-draggable/dist/react-draggable'
     },
-    map: { '*': { 'react-dom': 'ReactDOM', 'react': 'React' } }
+    map: {'*': {'react-dom': 'ReactDOM', 'react': 'React'}}
 });
 
 define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, _, Draggable) {
@@ -17,32 +17,31 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
     var App = React.createClass({
         render: function () {
             return (
-
-
-                    <LargeBox {...this.props} numberOfBoxes={13}/>
-
-
+                <LargeBox {...this.props} numberOfBoxes={10}/>
             )
         }
     });
 
     var LargeBox = React.createClass({
+        mixins: [React.addons.PureRenderMixin],
+        getInitialState: function () {
+
+            return {
+                boxes: []
+            }
+        },
+        addToList: function () {
+            var curBox = [{
+                key: Math.random(),
+            }].concat(this.state.boxes);
+        },
         handleStart: function (event, ui) {
-            //console.log(event.target);
-            //console.log(event.currentTarget);
-            //console.log('Event: ', event);
-            //console.log('Position: ', ui.position);
             if (event.target.classList.contains("small-box")) {
                 return false;
             }
         },
 
         handleDrag: function (event, ui) {
-            //console.log(event.target);
-            //console.log(event.currentTarget);
-            //console.log('Event: ', event);
-            //console.log('Position: ', ui.position);
-
         },
 
         handleStop: function (event, ui) {
@@ -52,10 +51,10 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
             //console.log('Position: ', ui.position);
 
         },
-        getRandomColor: function() {
+        getRandomColor: function () {
             var letters = '0123456789ABCDEF'.split('');
             var color = '#';
-            for (var i = 0; i < 6; i++ ) {
+            for (var i = 0; i < 6; i++) {
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
@@ -90,6 +89,8 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
 
     var SmallBox = React.createClass({
         handleStart: function (event, ui) {
+            console.log(event.clientX);
+            console.log(event.clientY);
         },
 
         handleDrag: function (event, ui) {
@@ -106,12 +107,12 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
                     handle=".handle"
                     //grid={[25, 25]}
                     //start={{x: 25, y: 25}}
-                    //bound={{left: 20, top: 20, bottom: 80, right: 80 }}
+                    bounds={'parent'}
                     onStart={this.handleStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleStop}>
-                          <div className="small-box handle" style={{backgroundColor: this.props.color}}></div>
-                    </Draggable>
+                    <div className="small-box handle" style={{backgroundColor: this.props.color}}></div>
+                </Draggable>
             )
         }
     });

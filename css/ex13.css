@@ -2,6 +2,7 @@
     border: 1px solid black;
     width: 450px;
     height: 470px;
+    position: relative;
 }
 
 .small-box {
