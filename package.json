@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Wix Kickstart (Dec 2015) ===========================",
   "main": "Gruntfile.js",
-  "dependencies": {},
+  "dependencies": {
+    "react-dnd": "^2.1.0"
+  },
   "devDependencies": {
     "babel-plugin-transform-react-jsx": "^6.5.0",
     "eslint-config-wix-editor": "^0.1.1",
