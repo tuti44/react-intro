@@ -91,8 +91,9 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
           return {
               style: {
                   backgroundColor: this.props.color,
-                  transform: 'translate(0px,0px)',
-              }
+                  transform: 'translate(0px,0px)'
+              },
+              dragging: false
           }
         },
         handleStart: function (event, ui) {
@@ -100,7 +101,9 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
         },
 
         handleDrag: function (event, ui) {
-            event.target.classList.add("dragging");
+            this.setState({
+                dragging: true
+            })
         },
 
         handleStop: function (event, ui) {
@@ -114,11 +117,12 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
             if (draggedOn) {
                 this.props.changeOrder(this.props.dataId, draggedOn.dataset.id);
             }
-            //this.setState({
-            //
-            //})
+            this.setState({
+                dragging: false
+            })
         },
         render: function () {
+            var draggingClass = this.state.dragging ? 'dragging' : '';
             return (
                 <Draggable
                     handle=".handle"
@@ -126,7 +130,7 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
                     onStart={this.handleStart}
                     onDrag={this.handleDrag}
                     onStop={this.handleStop}>
-                    <div className="small-box handle" style={this.state.style} data-id={this.props.dataId}></div>
+                    <div className={'small-box handle ' + draggingClass} style={this.state.style} data-id={this.props.dataId}></div>
                 </Draggable>
             )
         }
