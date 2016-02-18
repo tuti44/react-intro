@@ -91,18 +91,17 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
           return {
               style: {
                   backgroundColor: this.props.color,
-                  transform: 'translate(0px,0px)'
+                  transform: 'translate(0, 0)'
               },
-              dragging: false
+              dragging: false,
+              transformed: true
           }
         },
         handleStart: function (event, ui) {
-
-        },
-
-        handleDrag: function (event, ui) {
             this.setState({
+                transformed: false,
                 dragging: true
+
             })
         },
 
@@ -110,27 +109,27 @@ define(['React', 'ReactDOM', 'lodash', 'Draggable'], function (React, ReactDOM, 
             var x = event.clientX;
             var y = event.clientY;
             var elements = document.elementsFromPoint(x, y);
-            var draggedOn = _.filter(elements, function (element) {
-                var classList = element.classList;
-                return classList.contains("small-box") && !classList.contains("react-draggable-dragging")
-            })[0];
-            if (draggedOn) {
+            var draggedOn = elements[1];
+            if (draggedOn.classList.contains("small-box")) {
                 this.props.changeOrder(this.props.dataId, draggedOn.dataset.id);
             }
             this.setState({
-                dragging: false
+                dragging: false,
+                transformed: true
             })
         },
         render: function () {
             var draggingClass = this.state.dragging ? 'dragging' : '';
+            var transformClass = this.state.transformed ? 'transformed' : '';
             return (
                 <Draggable
                     handle=".handle"
                     bounds={'parent'}
                     onStart={this.handleStart}
                     onDrag={this.handleDrag}
-                    onStop={this.handleStop}>
-                    <div className={'small-box handle ' + draggingClass} style={this.state.style} data-id={this.props.dataId}></div>
+                    onStop={this.handleStop}
+                    zIndex={2}>
+                    <div className={transformClass + ' small-box handle ' + draggingClass} style={this.state.style} data-id={this.props.dataId}></div>
                 </Draggable>
             )
         }
