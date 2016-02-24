@@ -44,18 +44,6 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
                 boxes: boxes
             }
         },
-        onDragStart: function(event) {
-            //event.dataTransfer.setData('text/plain', null);
-
-            this.dragged = event.currentTarget;
-            event.dataTransfer.effectAllowed = 'move';
-
-            // Firefox
-            event.dataTransfer.setData("text/html", event.currentTarget);
-        },
-        onDragEnd: function(event) {
-
-        },
         changeOrder: function(draggedKey, draggedOnKey) {
             var index1 = _.findIndex(this.state.boxes, {key: draggedKey});
             var index2 = _.findIndex(this.state.boxes, {key: draggedOnKey});
@@ -75,11 +63,6 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
                 boxes: newBoxes
             });
         },
-        handleStart: function (event, ui) {
-            if (event.target.classList.contains("small-box")) {
-                return false;
-            }
-        },
         renderSmallBoxes: function () {
             var children = [];
             var boxes = this.state.boxes;
@@ -91,8 +74,7 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
         },
         render: function () {
             return (
-                <div className="container"
-                     draggable="true" onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                <div className="container" onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
                     {this.renderSmallBoxes()}
                 </div>
             )
@@ -108,11 +90,13 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
         },
         onDragOver: function(event) {
             event.preventDefault();
+            dragged.style.opacity = "0";
             draggedOver = event.target;
             this.props.pushAfter(dragged.getAttribute('id'), draggedOver.getAttribute('id'));
 
         },
         onDragEnd: function(event) {
+            //dragged.style.opacity = "1";
             this.props.pushAfter(dragged.getAttribute('id'), draggedOver.getAttribute('id'));
         },
         render: function () {
