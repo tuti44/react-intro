@@ -87,22 +87,23 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
     var SmallBox = React.createClass({
         onDragStart: function(event) {
             dragged = event.currentTarget;
+            event.dataTransfer.effectAllowed = 'move';
+            this.dragClass = 'dragged';
         },
         onDragOver: function(event) {
             event.preventDefault();
-            dragged.style.opacity = "0";
             draggedOver = event.target;
             this.props.pushAfter(dragged.getAttribute('id'), draggedOver.getAttribute('id'));
-
         },
         onDragEnd: function(event) {
-            //dragged.style.opacity = "1";
+            this.dragClass = '';
             this.props.pushAfter(dragged.getAttribute('id'), draggedOver.getAttribute('id'));
         },
         render: function () {
+            this.dragClass = this.dragClass || '';
             return (
                 <div draggable='true' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd} onDragOver={this.onDragOver}
-                     className='small-box' style={{backgroundColor: this.props.color}}
+                     className={'small-box ' + this.dragClass} style={{backgroundColor: this.props.color}}
                      key={this.props.dataId} id={this.props.dataId}>{this.props.dataId}</div>
             )
         }
