@@ -5,7 +5,7 @@ require.config({
         lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.3.0/lodash.min',
         React: 'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons',
         ReactDOM: 'https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom',
-        Draggable: './node_modules/react-draggable/dist/react-draggable'
+        Draggable: './../../node_modules/react-draggable/dist/react-draggable'
     },
     map: {'*': {'react-dom': 'ReactDOM', 'react': 'React'}}
 });
