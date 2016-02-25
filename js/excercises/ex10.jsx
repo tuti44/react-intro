@@ -4,8 +4,8 @@ require.config({
     paths: {
         handlebars: 'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars',
         lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.3.0/lodash.min',
-        react: './node_modules/react/dist/react',
-        ReactDOM: './node_modules/react-dom/dist/react-dom'
+        react: './../../node_modules/react/dist/react',
+        ReactDOM: './../../node_modules/react-dom/dist/react-dom'
     }
 });
 
