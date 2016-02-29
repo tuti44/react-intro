@@ -41,10 +41,12 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
             });
 
             return {
-                boxes: boxes
+                boxes: boxes,
+                dragged: null,
+                draggedOver: null
             }
         },
-        changeOrder: function(draggedKey, draggedOnKey) {
+        changeOrder: function (draggedKey, draggedOnKey) {
             var index1 = _.findIndex(this.state.boxes, {key: draggedKey});
             var index2 = _.findIndex(this.state.boxes, {key: draggedOnKey});
             var newBoxes = this.state.boxes.slice();
@@ -54,9 +56,9 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
                 boxes: newBoxes
             });
         },
-        pushAfter: function (draggedKey, draggedOnKey) {
-            var indexDragged = _.findIndex(this.state.boxes, {key: draggedKey});
-            var indexDraggedOn = _.findIndex(this.state.boxes, {key: draggedOnKey});
+        pushAfter: function (draggedOverId) {
+            var indexDragged = _.findIndex(this.state.boxes, {key: this.state.dragged});
+            var indexDraggedOn = _.findIndex(this.state.boxes, {key: draggedOverId});
             var newBoxes = this.state.boxes.slice();
             newBoxes.splice(indexDraggedOn, 0, newBoxes.splice(indexDragged, 1)[0]);
             this.setState({
@@ -67,43 +69,59 @@ define(['React', 'ReactDOM', 'lodash'], function (React, ReactDOM, _) {
             var children = [];
             var boxes = this.state.boxes;
             for (var i = 0, length = boxes.length; i < length; i++) {
-                children.push(<SmallBox changeOrder={this.changeOrder} pushAfter={this.pushAfter}
+                var dragged = false;
+                if (boxes[i].key === this.state.dragged) {
+                    dragged = true;
+                }
+                children.push(<SmallBox dragged={dragged}
+                                        setDragged={this.setDragged} onSmallBoxDraggedOver={this.onSmallBoxDraggedOver}
                                         color={boxes[i].color} key={boxes[i].key} dataId={boxes[i].key}/>)
             }
             return children;
         },
+        setDragged: function (dragged) {
+            if (this.state.dragged !== dragged) {
+                this.setState({dragged: dragged});
+            }
+        },
+        onSmallBoxDraggedOver: function (draggedOverId) {
+            if (!this.state.dragged || this.state.dragged === draggedOverId) {
+                return;
+            }
+            this.pushAfter(draggedOverId);
+        },
         render: function () {
             return (
-                <div className="container" onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+                <div draggable='true' className="container" onDragStart={this.onDragStart} onDragOver={this.onDragOver}>
                     {this.renderSmallBoxes()}
                 </div>
             )
         }
     });
 
-    var dragged;
-    var draggedOver;
+
 
     var SmallBox = React.createClass({
-        onDragStart: function(event) {
-            dragged = event.currentTarget;
+        mixins: [React.addons.PureRenderMixin],
+        onDragStart: function (event) {
             event.dataTransfer.effectAllowed = 'move';
-            this.dragClass = 'dragged';
+            setTimeout(function() {
+                this.props.setDragged(this.props.dataId);
+            }.bind(this), 50);
         },
-        onDragOver: function(event) {
+        onDragOver: function (event) {
             event.preventDefault();
-            draggedOver = event.target;
-            this.props.pushAfter(dragged.getAttribute('id'), draggedOver.getAttribute('id'));
+            this.props.onSmallBoxDraggedOver(this.props.dataId);
         },
-        onDragEnd: function(event) {
-            this.dragClass = '';
-            this.props.pushAfter(dragged.getAttribute('id'), draggedOver.getAttribute('id'));
+        onDragEnd: function () {
+            this.props.setDragged(null);
         },
         render: function () {
-            this.dragClass = this.dragClass || '';
+            var dragClass = this.props.dragged ? 'dragged' : '';
             return (
-                <div draggable='true' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd} onDragOver={this.onDragOver}
-                     className={'small-box ' + this.dragClass} style={{backgroundColor: this.props.color}}
+                <div draggable='true' onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}
+                     onDragOver={this.onDragOver}
+                     className={'small-box ' + dragClass} style={{backgroundColor: this.props.color}}
                      key={this.props.dataId} id={this.props.dataId}>{this.props.dataId}</div>
             )
         }
